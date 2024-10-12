@@ -262,10 +262,17 @@ where
         let finalizer = Arc::clone(&ledger).spawn_finalizer();
 
         let mut reader = BufferReader::new(Arc::clone(&ledger), finalizer);
-        reader
-            .seek_to_next_record()
-            .await
-            .context(ReaderSeekFailedSnafu)?;
+        if let Err(e) = reader.seek_to_next_record().await {
+            if let Some(os_err) = e.source().and_then(|err| err.downcast_ref::<std::io::Error>()) {
+                if os_err.raw_os_error() == Some(2) {
+                    eprintln!("Skipping reader seek error: {:?}", e);
+                } else {
+                    return Err(BufferError::ReaderSeekFailed { source: e });
+                }
+            } else {
+                return Err(BufferError::ReaderSeekFailed { source: e });
+            }
+        }
 
         ledger.synchronize_buffer_usage();
 
