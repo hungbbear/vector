@@ -10,3 +10,4 @@
 !rust-toolchain.toml
 !scripts
 !vdev
+!target
