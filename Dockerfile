@@ -4,7 +4,7 @@ WORKDIR /vector
 
 ARG TARGETPLATFORM
 
-COPY target/artifacts/vector-*-unknown-linux-musl*.tar.gz ./
+COPY /vector/target/artifacts/vector-*-unknown-linux-musl*.tar.gz ./
 
 # special case for arm v6 builds, /etc/apk/arch reports armhf which conflicts with the armv7 package
 RUN ls -la && ARCH=$(if [ "$TARGETPLATFORM" = "linux/arm/v6" ]; then echo "arm"; else cat /etc/apk/arch; fi) \
