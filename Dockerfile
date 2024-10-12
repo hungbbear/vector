@@ -7,7 +7,7 @@ ARG TARGETPLATFORM
 COPY target/artifacts/vector-*-unknown-linux-musl*.tar.gz ./
 
 # special case for arm v6 builds, /etc/apk/arch reports armhf which conflicts with the armv7 package
-RUN ARCH=$(if [ "$TARGETPLATFORM" = "linux/arm/v6" ]; then echo "arm"; else cat /etc/apk/arch; fi) \
+RUN ls -la && ARCH=$(if [ "$TARGETPLATFORM" = "linux/arm/v6" ]; then echo "arm"; else cat /etc/apk/arch; fi) \
     && tar -xvf vector-*-"$ARCH"-unknown-linux-musl*.tar.gz --strip-components=2
 
 RUN mkdir -p /var/lib/vector
